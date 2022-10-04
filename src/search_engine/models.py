@@ -25,7 +25,7 @@ class Vacancy(models.Model):
     slug = models.CharField(max_length=50, unique=True, blank=True)
 
     class Meta:
-        verbose_name = 'вакансию'
+        verbose_name = 'вакансия'
         verbose_name_plural = 'Вакансии'
 
     def __str__(self):
@@ -35,3 +35,21 @@ class Vacancy(models.Model):
         if not self.slug:
             self.slug = slugify(str(self.designation))
         super().save(*args, **kwargs)
+
+
+class VacancyParsed(models.Model):
+    url = models.URLField(unique=True, verbose_name='Ссылка')
+    designation = models.CharField(max_length=250, verbose_name='Вакансия')
+    company = models.CharField(max_length=250, verbose_name='Компания')
+    description = models.TextField(verbose_name='Подробное описание вакансии')
+    city = models.ForeignKey('City', on_delete=models.CASCADE, verbose_name='Город')
+    vacancy = models.ForeignKey('Vacancy', on_delete=models.SET_DEFAULT, default='Удаленная работа',
+                                verbose_name='Должность')
+    time_stamp = models.DateField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'вакансия'
+        verbose_name_plural = 'Собранные вакансии'
+
+    def __str__(self):
+        return self.designation
