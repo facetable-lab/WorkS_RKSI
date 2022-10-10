@@ -15,7 +15,7 @@
                 <a href="{{ vacancy.url }}" target="_blank">{{ vacancy.designation }}</a>
             </h5>
             <div class="card-body">
-                <p class="card-text">{{ vacancy.description }}</p>
+                <p class="card-text">{{ vacancy.description|truncatewords:50 }}</p>
                 <p>
                     <span class="city" style="font-weight: 600">{{ vacancy.city.designation }}</span> |
                     {{ vacancy.vacancy.designation }} | {{ vacancy.time_stamp }}
