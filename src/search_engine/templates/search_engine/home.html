@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{# Заголовок страницы #}
+<div class="title">
+    {% block title %}
+        Список вакансий
+    {% endblock %}
+</div>
+
+
+{# Блок основного контента #}
+<div class="content">
+    {% block content %}
+
+        {# Вывод вакансий (карточек) #}
+        {% for vacancy in vacancies_list %}
+            <div class="card my-3">
+                <h5 class="card-header">
+                    <a href="{{ vacancy.url }}" target="_blank">{{ vacancy.designation }}</a>
+                </h5>
+                <div class="card-body">
+                    <p class="card-text">{{ vacancy.description }}</p>
+                    <p>
+                        <span class="city" style="font-weight: 600">{{ vacancy.city.designation }}</span> |
+                        {{ vacancy.vacancy.designation }} | {{ vacancy.time_stamp }}
+                    </p>
+                </div>
+            </div>
+
+
+            {% empty %}
+            <h1 class="text-center" style="margin-bottom: 40px;">
+                К сожалению, по вашему запросу ничего не найдено :(</h1>
+
+        {% endfor %}
+
+
+        {#        Форма поиска#}
+        <div class="row">
+            <div class="col-md-6 mx-auto ">
+                <form action="" method="get">
+                    <div class="form-group">
+                        {{ search_form.as_p }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Поиск</button>
+                </form>
+            </div>
+        </div>
+
+    {% endblock %}
+</div>
