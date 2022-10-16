@@ -6,6 +6,6 @@ import datetime
 def index(request):
     date = datetime.datetime.now()
     context = {
-        'date' : date
+        'date': date
     }
     return render(request, 'index.html', context)
