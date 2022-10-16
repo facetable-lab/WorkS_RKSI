@@ -8,4 +8,4 @@ def index(request):
     context = {
         'vacancies_list': vacancies_list
     }
-    return render(request, 'index.html', context)
+    return render(request, 'search_engine/index.html', context)
