@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}WorkSE - Список вакансий{% endblock %}
+
+{% block content %}
+    {% for vacancy in vacancies_list %}
+        <div class="card my-3">
+            <div class="card-header">
+                {{ vacancy.company }}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title"><a href="{{ vacancy.url }}" target="_blank">{{ vacancy.title }}</a></h5>
+                <p class="card-text">{{ vacancy.description|truncatewords:75 }}</p>
+                <h6><span style="font-weight: 200">{{ vacancy.city.title }} | {{ vacancy.specialization.title }} | {{ vacancy.time_stamp }}</span></h6>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

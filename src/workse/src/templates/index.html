@@ -1,9 +1,0 @@
-{% extends 'base.html' %}
-
-{% block title %}WorkSE - Список вакансий{% endblock %}
-
-{% block content %}
-    {% for vacancy in vacancies_list %}
-        <p><a href="{{ vacancy.url }}" target="_blank">{{ vacancy.title }}</a></p>
-    {% endfor %}
-{% endblock %}
