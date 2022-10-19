@@ -3,16 +3,27 @@
 {% block title %}WorkSE - Список вакансий{% endblock %}
 
 {% block content %}
-    {% for vacancy in vacancies_list %}
-        <div class="card my-3">
-            <div class="card-header">
-                {{ vacancy.company }}
-            </div>
-            <div class="card-body">
-                <h5 class="card-title"><a href="{{ vacancy.url }}" target="_blank">{{ vacancy.title }}</a></h5>
-                <p class="card-text">{{ vacancy.description|truncatewords:75 }}</p>
-                <h6><span style="font-weight: 200">{{ vacancy.city.title }} | {{ vacancy.specialization.title }} | {{ vacancy.time_stamp }}</span></h6>
-            </div>
-        </div>
-    {% endfor %}
+{% for vacancy in vacancies_list %}
+<div class="card my-3">
+    <div class="card-header">
+        {{ vacancy.company }}
+    </div>
+    <div class="card-body">
+        <h5 class="card-title"><a href="{{ vacancy.url }}" target="_blank">{{ vacancy.title }}</a></h5>
+        <p class="card-text">{{ vacancy.description|truncatewords:75 }}</p>
+        <h6><span style="font-weight: 200">{{ vacancy.city.title }} | {{ vacancy.specialization.title }} | {{ vacancy.time_stamp }}</span>
+        </h6>
+    </div>
+</div>
+{% endfor %}
+
+<form method="get">
+    <label for="city">Город</label> <br>
+    <input type="text" id="city" name="city"> <br>
+    <label for="specialization">Специальность</label> <br>
+    <input type="text" id="specialization" name="specialization"> <br>
+
+    <input type="submit" value="Отправить">
+</form>
+
 {% endblock %}
