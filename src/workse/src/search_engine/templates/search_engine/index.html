@@ -15,15 +15,20 @@
         </h6>
     </div>
 </div>
+
+{% empty %}
+    <h3 style="text-align: center; margin: 30px;">К сожалению, по вашему запросу ничего не найдено :(</h3>
+
 {% endfor %}
 
-<form method="get">
-    <label for="city">Город</label> <br>
-    <input type="text" id="city" name="city"> <br>
-    <label for="specialization">Специальность</label> <br>
-    <input type="text" id="specialization" name="specialization"> <br>
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <form method="get">
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Найти</button>
+        </form>
+    </div>
+</div>
 
-    <input type="submit" value="Отправить">
-</form>
 
 {% endblock %}
