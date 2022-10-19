@@ -4,7 +4,17 @@ from .models import Vacancy
 
 
 def index(request):
-    vacancies_list = Vacancy.objects.all()
+    city = request.GET.get('city')
+    specialization = request.GET.get('specialization')
+    _filter = {}
+    if city or specialization:
+        if city:
+            _filter['city__title'] = city
+        if specialization:
+            _filter['specialization__title'] = specialization
+
+    vacancies_list = Vacancy.objects.filter(**_filter)
+
     context = {
         'vacancies_list': vacancies_list
     }
