@@ -1,8 +1,11 @@
+<!-- Наследование от базового шаблона (src/templates/base.html)-->
 {% extends 'base.html' %}
 
 {% block title %}WorkSE - Список вакансий{% endblock %}
 
 {% block content %}
+
+<!-- Проход циклом и вывод вакансий в карточках -->
 {% for vacancy in vacancies_list %}
 <div class="card my-3">
     <div class="card-header">
@@ -16,11 +19,13 @@
     </div>
 </div>
 
+<!-- Если нет вакансий, подходящих под условия -->
 {% empty %}
-    <h3 style="text-align: center; margin: 30px;">К сожалению, по вашему запросу ничего не найдено :(</h3>
+<h3 style="text-align: center; margin: 30px;">К сожалению, по вашему запросу ничего не найдено :(</h3>
 
 {% endfor %}
 
+<!-- Вывод формы -->
 <div class="row">
     <div class="col-md-6 mx-auto">
         <form method="get">
