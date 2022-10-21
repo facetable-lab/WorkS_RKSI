@@ -4,6 +4,7 @@ from .models import Vacancy
 from .forms import SearchForm
 
 
+# Функция отображения главной страницы сайта
 def index(request):
     form = SearchForm()
     city = request.GET.get('city')

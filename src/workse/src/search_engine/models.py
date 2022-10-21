@@ -1,6 +1,7 @@
 from django.db import models
 
 
+# Модель города
 class City(models.Model):
     title = models.CharField(max_length=50, unique=True, verbose_name='Город')
     slug = models.CharField(max_length=50, blank=True, unique=True)
@@ -13,6 +14,7 @@ class City(models.Model):
         verbose_name_plural = 'города'
 
 
+# Модель специализации
 class Specialization(models.Model):
     title = models.CharField(max_length=50, unique=True, verbose_name='Специализация')
     slug = models.CharField(max_length=50, blank=True, unique=True)
@@ -25,6 +27,7 @@ class Specialization(models.Model):
         verbose_name_plural = 'Специализации'
 
 
+# Модель собранной вакансии
 class Vacancy(models.Model):
     url = models.URLField(unique=True, verbose_name='Ссылка (url)')
     title = models.CharField(max_length=70, verbose_name='Название вакансии')
