@@ -27,8 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# Application definition
-
+# Подключенные приложения
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -37,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'search_engine.apps.SearchEngineConfig',
+    'accounts.apps.AccountsConfig',
 ]
 
 MIDDLEWARE = [
@@ -49,8 +49,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Главный файл с путями
 ROOT_URLCONF = 'workse.urls'
 
+# Список мест, где django будет искать шаблоны
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -69,7 +71,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'workse.wsgi.application'
 
-# Database
+# База данных
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
@@ -100,6 +102,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1 \/topics/i18n/
 
+# Язык проекта - русский
 LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
@@ -117,3 +120,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Подключение собственного типа пользователя
+AUTH_USER_MODEL = 'accounts.Subscriber'
