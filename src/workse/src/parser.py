@@ -31,12 +31,20 @@ def head_hunter(url):
                 href = title.a['href']
                 company = card.find('div', attrs={'class': 'vacancy-serp-item__meta-info-company'})
                 description = card.find('div', attrs={'class': 'g-user-content'})
-                jobs.append({
-                    'title': title.text,
-                    'company': company.text,
-                    'description': description.text,
-                    'url': href,
-                })
+                if description:
+                    jobs.append({
+                        'title': title.text,
+                        'company': company.text,
+                        'description': description.text,
+                        'url': href,
+                    })
+                else:
+                    jobs.append({
+                        'title': title.text,
+                        'company': company.text,
+                        'description': 'Описание отсутствует',
+                        'url': href,
+                    })
         else:
             errors.append({
                 'error_text': 'Не найден главный div',
@@ -66,27 +74,39 @@ def habr_career(url):
 
     if resp.status_code == 200:
         soup = BS(resp.content, 'html.parser')
-        div_list = soup.find('div', attrs={'class', 'section-group section-group--gap-medium'})
-        if div_list:
-            vacancy_card = soup.find_all('div', attrs={'class': 'vacancy-card'})
-            for card in vacancy_card:
-                title = card.find('a', attrs={'class': 'vacancy-card__title-link'})
-                href = title['href']
-                company = card.find('a', attrs={'class': 'link-comp link-comp--appearance-dark'})
-                description = card.find_all('a', attrs={'class': 'link-comp link-comp--appearance-dark'})
-                description = description[2].text + ' | ' + description[3].text
-                jobs.append({
-                    'title': title.text,
-                    'company': company.text,
-                    'description': description,
-                    'url': domain + href,
-                })
+        new_vacancies = soup.find('div', attrs={'class': 'no-content'})
+        if not new_vacancies:
+            div_list = soup.find('div', attrs={'class', 'section-group section-group--gap-medium'})
+            if div_list:
+                vacancy_card = soup.find_all('div', attrs={'class': 'vacancy-card'})
+                for card in vacancy_card:
+                    title = card.find('a', attrs={'class': 'vacancy-card__title-link'})
+                    href = title['href']
+                    company = card.find('a', attrs={'class': 'link-comp link-comp--appearance-dark'})
+                    description_list = card.find_all('a', attrs={'class': 'link-comp link-comp--appearance-dark'})
+                    description_list.pop(0)
+                    description = ''
+                    for el in description_list:
+                        description += ' | ' + el.text
 
+                    jobs.append({
+                        'title': title.text,
+                        'company': company.text,
+                        'description': description,
+                        'url': domain + href,
+                    })
+
+            else:
+                errors.append({
+                    'error_text': 'Не найден главный div',
+                    'is_redirect': resp.is_redirect,
+                    'time': resp.headers['Set-Cookie'].split(';')[4][0:38],
+                    'connection_method': resp.request,
+                    'url': resp.url,
+                })
         else:
             errors.append({
-                'error_text': 'Не найден главный div',
-                'is_redirect': resp.is_redirect,
-                'time': resp.headers['Set-Cookie'].split(';')[4][0:38],
+                'error_text': 'Страница пуста (нет вакансий по данным фильтрам)',
                 'connection_method': resp.request,
                 'url': resp.url,
             })
@@ -103,10 +123,11 @@ def habr_career(url):
 
 
 if __name__ == '__main__':
-    url = 'https://career.habr.com/vacancies?locations%5B%5D=r_14068&q=java&type=all'
-    # url = 'https://persianovskiy.hh.ru/search/vacancy?text=python&from=suggest_post&area=1'
-    jobs, errors = habr_career(url)
+    url = 'https://hh.ru/search/vacancy?text=Javascript+developer&from=suggest_post&salary=&clusters=true' \
+          '&ored_clusters=true&enable_snippets=true '
+    jobs, errors = head_hunter(url)
     print(jobs)
+    print(errors)
     file_handler = codecs.open('vacancies.txt', 'w', 'utf-8')
     file_handler.write(str(jobs))
     file_handler.write(str(errors))
