@@ -17,6 +17,7 @@ headers = [
 ]
 
 
+# TODO: Memory clean.
 def head_hunter(url):
     jobs = []
     errors = []
@@ -67,6 +68,7 @@ def head_hunter(url):
     return jobs, errors
 
 
+# TODO: Memory clean.
 def habr_career(url):
     domain = 'https://career.habr.com'
     jobs = []
