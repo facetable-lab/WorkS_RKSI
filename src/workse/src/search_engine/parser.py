@@ -3,6 +3,8 @@ import requests
 import codecs
 from random import choice
 
+__all__ = ('head_hunter', 'habr_career')
+
 headers = [
     {'User-Agent': 'Mozilla/7.0 (Windows 7; rv:61) Gecko/30125361 Firefox/61.0',
      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'},
@@ -83,6 +85,7 @@ def habr_career(url):
                     title = card.find('a', attrs={'class': 'vacancy-card__title-link'})
                     href = title['href']
                     company = card.find('a', attrs={'class': 'link-comp link-comp--appearance-dark'})
+                    # TODO: Заходить на страницу вакансии и брать полное описание.
                     description_list = card.find_all('a', attrs={'class': 'link-comp link-comp--appearance-dark'})
                     description_list.pop(0)
                     description = ''
@@ -126,9 +129,3 @@ if __name__ == '__main__':
     url = 'https://hh.ru/search/vacancy?text=Javascript+developer&from=suggest_post&salary=&clusters=true' \
           '&ored_clusters=true&enable_snippets=true '
     jobs, errors = head_hunter(url)
-    print(jobs)
-    print(errors)
-    file_handler = codecs.open('vacancies.txt', 'w', 'utf-8')
-    file_handler.write(str(jobs))
-    file_handler.write(str(errors))
-    file_handler.close()
