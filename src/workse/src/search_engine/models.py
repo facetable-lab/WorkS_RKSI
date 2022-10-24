@@ -43,3 +43,12 @@ class Vacancy(models.Model):
     class Meta:
         verbose_name = 'вакансию'
         verbose_name_plural = 'Вакансии'
+
+
+# Модель сохранения ошибок
+class Error(models.Model):
+    time_stamp = models.DateField(auto_now_add=True, verbose_name='Время')
+    data = models.JSONField()
+
+    def __str__(self):
+        return str(f'{self.time_stamp} - {self.data}')
