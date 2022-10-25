@@ -1,6 +1,12 @@
 from django.db import models
 
 
+# Значение по умолчанию поля JSONField модели Url
+def get_default_urls_json():
+    return {'head_hunter': '',
+            'habr_career': ''}
+
+
 # Модель города
 class City(models.Model):
     title = models.CharField(max_length=50, unique=True, verbose_name='Город')
@@ -52,3 +58,16 @@ class Error(models.Model):
 
     def __str__(self):
         return str(f'{self.time_stamp} - {self.data}')
+
+
+# Модель ссылок для парсера
+class Url(models.Model):
+    city = models.ForeignKey(City, on_delete=models.PROTECT, verbose_name='Город')
+    specialization = models.ForeignKey(Specialization, on_delete=models.PROTECT, verbose_name='Специализация')
+    url_data = models.JSONField(default=get_default_urls_json)
+
+    def __str__(self):
+        return f'{self.city} | {self.specialization}'
+
+    class Meta:
+        unique_together = ('city', 'specialization')
