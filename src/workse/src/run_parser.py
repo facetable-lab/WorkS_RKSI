@@ -19,8 +19,8 @@ from search_engine.parser import *
 Subscriber = get_user_model()
 
 parsers = (
-    (head_hunter, 'https://persianovskiy.hh.ru/search/vacancy?text=python&from=suggest_post&area=1'),
-    (habr_career, 'https://career.habr.com/vacancies?locations%5B%5D=c_678&q=python&type=all')
+    (head_hunter, 'head_hunter'),
+    (habr_career, 'habr_career')
 )
 
 
@@ -46,16 +46,22 @@ def get_urls(_settings):
     return urls
 
 
-city = City.objects.filter(slug='moskva').first()
-specialization = Specialization.objects.filter(slug='python').first()
+settings = get_subscriber_settings()
+url_list = get_urls(settings)
+
+# TODO: Удалить лишние комментарии.
+# city = City.objects.filter(slug='moskva').first()
+# specialization = Specialization.objects.filter(slug='python').first()
 
 jobs, errors = [], []
 
 # Запуск сбора.
-for func, url in parsers:
-    j, e = func(url)
-    jobs += j
-    errors += e
+for data in url_list:
+    for func, key in parsers:
+        url = data['url_data'][key]
+        j, e = func(url, city=data['city'], specialization=data['specialization'])
+        jobs += j
+        errors += e
 
 # Отчистка памяти от лишних объектов.
 # TODO: refactor with if errors and delete on line 48
@@ -65,7 +71,7 @@ del j, e, parsers
 
 # Запись собранных вакансий в БД.
 for job in jobs:
-    vacancy = Vacancy(**job, city=city, specialization=specialization)
+    vacancy = Vacancy(**job)
 try:
     vacancy.save()
 except DatabaseError:
