@@ -60,11 +60,12 @@ class SubscriberAdmin(BaseUserAdmin):
     # Поля, которые будут использоваться при отображении пользовательской модели.
     # Они переопределяют определения в базовом UserAdmin
     # которые ссылаются на определенные поля в auth.User.
-    list_display = ('email', 'is_admin')
+    list_display = ('email', 'is_admin', 'specialization', 'city', 'is_mailing')
     list_filter = ('is_admin',)
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Permissions', {'fields': ('is_admin',)}),
+        ('Настройки пользователя', {'fields': ('specialization', 'city', 'is_mailing')}),
+        ('Права доступа', {'fields': ('is_admin',)}),
     )
 
     # add_fieldsets не является стандартным атрибутом ModelAdmin. SubscriberAdmin
