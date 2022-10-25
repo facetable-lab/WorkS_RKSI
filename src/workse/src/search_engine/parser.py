@@ -18,89 +18,41 @@ headers = [
 
 
 # TODO: Memory clean.
-def head_hunter(url):
+def head_hunter(url, city=None, specialization=None):
     jobs = []
     errors = []
 
-    resp = requests.get(url, headers=choice(headers))
+    if url:
+        resp = requests.get(url, headers=choice(headers))
 
-    if resp.status_code == 200:
-        soup = BS(resp.content, 'html.parser')
-        div_list = soup.find('div', attrs={'class', 'vacancy-serp-content'})
-        if div_list:
-            vacancy_card = soup.find_all('div', attrs={'class': 'serp-item'})
-            for card in vacancy_card:
-                title = card.find('h3')
-                href = title.a['href']
-                company = card.find('div', attrs={'class': 'vacancy-serp-item__meta-info-company'})
-                description = card.find('div', attrs={'class': 'g-user-content'})
-                if description:
-                    jobs.append({
-                        'title': title.text,
-                        'company': company.text,
-                        'description': description.text,
-                        'url': href,
-                    })
-                else:
-                    jobs.append({
-                        'title': title.text,
-                        'company': company.text,
-                        'description': 'Описание отсутствует',
-                        'url': href,
-                    })
-        else:
-            errors.append({
-                'error_text': 'Не найден главный div',
-                'is_redirect': resp.is_redirect,
-                'time': resp.headers['Set-Cookie'].split(';')[4][0:38],
-                'connection_method': resp.request,
-                'url': resp.url,
-            })
-    else:
-        errors.append({
-            'error_code': resp.status_code,
-            'error_text': 'Страница не ответила',
-            'time': resp.headers['Set-Cookie'].split(';')[4][0:38],
-            'connection_method': resp.request,
-            'url': resp.url,
-        })
-
-    return jobs, errors
-
-
-# TODO: Memory clean.
-def habr_career(url):
-    domain = 'https://career.habr.com'
-    jobs = []
-    errors = []
-
-    resp = requests.get(url, headers=choice(headers))
-
-    if resp.status_code == 200:
-        soup = BS(resp.content, 'html.parser')
-        new_vacancies = soup.find('div', attrs={'class': 'no-content'})
-        if not new_vacancies:
-            div_list = soup.find('div', attrs={'class', 'section-group section-group--gap-medium'})
+        if resp.status_code == 200:
+            soup = BS(resp.content, 'html.parser')
+            div_list = soup.find('div', attrs={'class', 'vacancy-serp-content'})
             if div_list:
-                vacancy_card = soup.find_all('div', attrs={'class': 'vacancy-card'})
+                vacancy_card = soup.find_all('div', attrs={'class': 'serp-item'})
                 for card in vacancy_card:
-                    title = card.find('a', attrs={'class': 'vacancy-card__title-link'})
-                    href = title['href']
-                    company = card.find('a', attrs={'class': 'link-comp link-comp--appearance-dark'})
-                    # TODO: Заходить на страницу вакансии и брать полное описание.
-                    description_list = card.find_all('a', attrs={'class': 'link-comp link-comp--appearance-dark'})
-                    description_list.pop(0)
-                    description = ''
-                    for el in description_list:
-                        description += ' | ' + el.text
-
-                    jobs.append({
-                        'title': title.text,
-                        'company': company.text,
-                        'description': description,
-                        'url': domain + href,
-                    })
-
+                    title = card.find('h3')
+                    href = title.a['href']
+                    company = card.find('div', attrs={'class': 'vacancy-serp-item__meta-info-company'})
+                    description = card.find('div', attrs={'class': 'g-user-content'})
+                    if description:
+                        jobs.append({
+                            'title': title.text,
+                            'company': company.text,
+                            'description': description.text,
+                            'url': href,
+                            'city_id': city,
+                            'specialization_id': specialization
+                        })
+                    else:
+                        jobs.append({
+                            'title': title.text,
+                            'company': company.text,
+                            'description': 'Описание отсутствует',
+                            'url': href,
+                            'city_id': city,
+                            'specialization_id': specialization
+                        })
             else:
                 errors.append({
                     'error_text': 'Не найден главный div',
@@ -111,18 +63,74 @@ def habr_career(url):
                 })
         else:
             errors.append({
-                'error_text': 'Страница пуста (нет вакансий по данным фильтрам)',
+                'error_code': resp.status_code,
+                'error_text': 'Страница не ответила',
+                'time': resp.headers['Set-Cookie'].split(';')[4][0:38],
                 'connection_method': resp.request,
                 'url': resp.url,
             })
-    else:
-        errors.append({
-            'error_code': resp.status_code,
-            'error_text': 'Страница не ответила',
-            'time': resp.headers['Set-Cookie'].split(';')[4][0:38],
-            'connection_method': resp.request,
-            'url': resp.url,
-        })
+
+    return jobs, errors
+
+
+# TODO: Memory clean.
+def habr_career(url, city=None, specialization=None):
+    domain = 'https://career.habr.com'
+    jobs = []
+    errors = []
+
+    resp = requests.get(url, headers=choice(headers))
+
+    if url:
+        if resp.status_code == 200:
+            soup = BS(resp.content, 'html.parser')
+            new_vacancies = soup.find('div', attrs={'class': 'no-content'})
+            if not new_vacancies:
+                div_list = soup.find('div', attrs={'class', 'section-group section-group--gap-medium'})
+                if div_list:
+                    vacancy_card = soup.find_all('div', attrs={'class': 'vacancy-card'})
+                    for card in vacancy_card:
+                        title = card.find('a', attrs={'class': 'vacancy-card__title-link'})
+                        href = title['href']
+                        company = card.find('a', attrs={'class': 'link-comp link-comp--appearance-dark'})
+                        # TODO: Заходить на страницу вакансии и брать полное описание.
+                        description_list = card.find_all('a', attrs={'class': 'link-comp link-comp--appearance-dark'})
+                        description_list.pop(0)
+                        description = ''
+                        for el in description_list:
+                            description += ' | ' + el.text
+
+                        jobs.append({
+                            'title': title.text,
+                            'company': company.text,
+                            'description': description,
+                            'url': domain + href,
+                            'city_id': city,
+                            'specialization_id': specialization
+                        })
+
+                else:
+                    errors.append({
+                        'error_text': 'Не найден главный div',
+                        'is_redirect': resp.is_redirect,
+                        'time': resp.headers['Set-Cookie'].split(';')[4][0:38],
+                        'connection_method': resp.request,
+                        'url': resp.url,
+                    })
+            else:
+                errors.append({
+                    'error_text': 'Страница пуста (нет вакансий по данным фильтрам)',
+                    'connection_method': resp.request,
+                    'url': resp.url,
+                })
+        else:
+            errors.append({
+                'error_code': resp.status_code,
+                'error_text': 'Страница не ответила',
+                'time': resp.headers['Set-Cookie'].split(';')[4][0:38],
+                'connection_method': resp.request,
+                'url': resp.url,
+            })
 
     return jobs, errors
 
