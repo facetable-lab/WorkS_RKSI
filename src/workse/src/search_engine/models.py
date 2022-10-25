@@ -50,6 +50,8 @@ class Vacancy(models.Model):
         verbose_name = 'вакансию'
         verbose_name_plural = 'Вакансии'
 
+        ordering = ['-time_stamp']
+
 
 # Модель сохранения ошибок
 class Error(models.Model):
