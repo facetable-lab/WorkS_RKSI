@@ -1,5 +1,6 @@
 from django.db import DatabaseError
 from django.contrib.auth import get_user_model
+import asyncio
 import codecs
 import os
 import sys
@@ -7,6 +8,7 @@ import sys
 # Инициализация django, для работы с моделями.
 project_src = os.path.dirname(os.path.abspath('manage.py'))
 sys.path.append(project_src)
+del project_src
 os.environ['DJANGO_SETTINGS_MODULE'] = 'workse.settings'
 
 import django
@@ -22,6 +24,8 @@ parsers = (
     (head_hunter, 'head_hunter'),
     (habr_career, 'habr_career')
 )
+
+jobs, errors = [], []
 
 
 def get_subscriber_settings():
@@ -46,26 +50,45 @@ def get_urls(_settings):
     return urls
 
 
+# Запуск сбора в асинхронном режиме
+async def run_parsers_async(value):
+    func, url, city, specialization = value
+    job, err = await loop.run_in_executor(None, func, url, city, specialization)
+    errors.extend(err)
+    jobs.extend(job)
+
+
 settings = get_subscriber_settings()
 url_list = get_urls(settings)
 
+# Создание асинхронного цикла
+# asyncio.get_event_loop
+loop = asyncio.new_event_loop()
+
+# Список задач для асинхронного запуска
+task_list = [(func, data['url_data'][key], data['city'], data['specialization'])
+             for data in url_list
+             for func, key in parsers]
+
+# Выполнение задач и предварительная отчистка памяти
+del parsers, url_list  # TODO: Оптимизация отчистки памяти: City, Specialization, Subscriber, Url, Error
+tasks = asyncio.wait([loop.create_task(run_parsers_async(task)) for task in task_list])
+
 # TODO: Удалить лишние комментарии.
-# city = City.objects.filter(slug='moskva').first()
-# specialization = Specialization.objects.filter(slug='python').first()
-
-jobs, errors = [], []
-
 # Запуск сбора.
-for data in url_list:
-    for func, key in parsers:
-        url = data['url_data'][key]
-        j, e = func(url, city=data['city'], specialization=data['specialization'])
-        jobs += j
-        errors += e
+# for data in url_list:
+#     for func, key in parsers:
+#         url = data['url_data'][key]
+#         j, e = func(url, city=data['city'], specialization=data['specialization'])
+#         jobs += j
+#         errors += e
+
+loop.run_until_complete(tasks)
+loop.close()
 
 # Отчистка памяти от лишних объектов.
 # TODO: refactor with if errors and delete on line 48
-del j, e, parsers
+# del j, e, parsers
 # if len(errors) == 0:
 #     del errors
 
