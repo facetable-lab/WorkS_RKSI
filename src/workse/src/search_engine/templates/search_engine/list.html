@@ -1,0 +1,93 @@
+<!-- Наследование от базового шаблона (src/templates/base.html)-->
+{% extends 'base.html' %}
+
+{% block title %}WorkSE - Список вакансий{% endblock %}
+
+{% block content %}
+
+<!-- Проход циклом и вывод вакансий в карточках -->
+{% for vacancy in vacancies_list %}
+<div class="card my-3">
+    <div class="card-header">
+        {{ vacancy.company }}
+    </div>
+    <div class="card-body">
+        <h5 class="card-title"><a href="{{ vacancy.url }}" target="_blank">{{ vacancy.title }}</a></h5>
+        <p class="card-text">{{ vacancy.description|truncatewords:75 }}</p>
+        <h6><span style="font-weight: 200">{{ vacancy.city.title }} | {{ vacancy.specialization.title }} | {{ vacancy.time_stamp }}</span>
+        </h6>
+    </div>
+</div>
+
+<!-- Если нет вакансий, подходящих под условия -->
+{% empty %}
+<h3 style="text-align: center; margin: 30px;">К сожалению, по вашему запросу ничего не найдено :(</h3>
+
+{% endfor %}
+
+<!-- Пагинация -->
+<!-- TODO: Изменить внешний вид пагинации -->
+{% if vacancies_list %}
+<div class="row">
+    <div class="col">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if vacancies_list.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?city={{city}}&specialization={{specialization}}&page=1"
+                           aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for page in vacancies_list.paginator.page_range %}
+                    <li class="page-item {% if page == vacancies_list.number %}active{% endif %}
+                                	"><a class="page-link" href="?city={{city}}&specialization={{specialization}}&page={{page}}">
+                        {{ page }}</a></li>
+                {% endfor %}
+
+                {% if vacancies_list.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?city={{city}}&specialization={{specialization}}&page={{vacancies_list.next_page_number}}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+<!--        <div class="pagination">-->
+<!--            <span class="step-links">-->
+<!--                {% if vacancies_list.has_previous %}-->
+<!--                <a href="?city={{ city }}&specialization={{ specialization }}&page=1">&laquo; first</a>-->
+<!--                <a href="?city={{ city }}&specialization={{ specialization }}&page={{ vacancies_list.previous_page_number }}">previous</a>-->
+<!--                {% endif %}-->
+<!--            </span>-->
+
+<!--            <div class="current">-->
+<!--                Page {{ vacancies_list.number }} of {{ vacancies_list.paginator.num_pages }}-->
+<!--            </div>-->
+
+<!--            {% if vacancies_list.has_next %}-->
+<!--            <a href="?city={{ city }}&specialization={{ specialization }}&page={{ vacancies_list.next_page_number }}">next</a>-->
+<!--            <a href="?city={{ city }}&specialization={{ specialization }}&page={{ vacancies_list.paginator.num_pages }}">last-->
+<!--                &raquo;</a>-->
+<!--            {% endif %}-->
+<!--        </div>-->
+    </div>
+</div>
+{% endif %}
+
+<!-- Вывод формы -->
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <form method="get" action="{% url 'list' %}">
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Найти</button>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
