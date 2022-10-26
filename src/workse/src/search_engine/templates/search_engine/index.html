@@ -5,30 +5,17 @@
 
 {% block content %}
 
-<!-- Проход циклом и вывод вакансий в карточках -->
-{% for vacancy in vacancies_list %}
-<div class="card my-3">
-    <div class="card-header">
-        {{ vacancy.company }}
-    </div>
-    <div class="card-body">
-        <h5 class="card-title"><a href="{{ vacancy.url }}" target="_blank">{{ vacancy.title }}</a></h5>
-        <p class="card-text">{{ vacancy.description|truncatewords:75 }}</p>
-        <h6><span style="font-weight: 200">{{ vacancy.city.title }} | {{ vacancy.specialization.title }} | {{ vacancy.time_stamp }}</span>
-        </h6>
+<div class="row">
+    <div class="col">
+        <h2 class="text-center my-3">Сервис по сбору и рассылке вакансий</h2>
     </div>
 </div>
 
-<!-- Если нет вакансий, подходящих под условия -->
-{% empty %}
-<h3 style="text-align: center; margin: 30px;">К сожалению, по вашему запросу ничего не найдено :(</h3>
-
-{% endfor %}
-
 <!-- Вывод формы -->
 <div class="row">
-    <div class="col-md-6 mx-auto">
-        <form method="get">
+    <div class="col-md-8 mx-auto">
+        <h4 class="text-center my-3">Для просмотра доступных вакансий - заполните форму.</h4>
+        <form method="get" action="{% url 'list' %}">
             {{ form.as_p }}
             <button type="submit" class="btn btn-primary">Найти</button>
         </form>
