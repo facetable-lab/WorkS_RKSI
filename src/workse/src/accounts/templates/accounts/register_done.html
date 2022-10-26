@@ -1,0 +1,22 @@
+<!-- Наследование от базового шаблона (src/templates/base.html)-->
+{% extends 'base.html' %}
+
+{% block title %}WorkSE - Успешно!{% endblock %}
+
+{% block content %}
+
+<!-- Вывод приветствия -->
+<!-- TODO:!Переделать внешний вид приветствия -->
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h2 class="my-3">Регистрация прошла успешно.</h2>
+        <h4 class="my-3">Вы новый подписчик! Вперед к поиску!  </h4>
+        <h4>Приветствуем тебя, владелец {{ new_subscriber.email }}. Ты успешно прошел регистрацию. Желаем удачи в поиске!</h4>
+        <p>Теперь ты можешь <a href="{% url 'accounts:login' %}">войти</a> в свой аккаунт.</p>
+
+
+    </div>
+</div>
+
+
+{% endblock %}
